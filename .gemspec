@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
 	s.name        = 'flame-flash'
-	s.version     = '1.0.0'
+	s.version     = '1.0.1'
 	s.date        = Date.today.to_s
 
 	s.summary     = 'Flash plugin for Flame-framework'
@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
 	s.homepage    = 'https://gitlab.com/AlexWayfer/flame-flash'
 	s.license     = 'MIT'
 
-	s.add_runtime_dependency 'flame', '~> 3.3'
+	s.add_runtime_dependency 'flame', '~> 3.3', '>= 3.3.4'
 
 	s.files = Dir[File.join('lib', '**', '*')]
 end

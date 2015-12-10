@@ -7,7 +7,7 @@ module Flame
 			proc do
 				# This callback rotates any flash structure we referenced,
 				# placing the 'next' hash into the session for the next request.
-				after :* do
+				after do
 					session[:flash] = flash.next
 				end
 			end
