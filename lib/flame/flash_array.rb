@@ -48,6 +48,11 @@ module Flame
 				@now.each(&block)
 			end
 
+			## Mass adding to next
+			def merge(hash)
+				hash.each { |type, text| self[type] = text }
+			end
+
 			private
 
 			def condition(hash, options = {}) # kind, section)
