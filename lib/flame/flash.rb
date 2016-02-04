@@ -14,11 +14,11 @@ module Flame
 		##   redirect ArticlesController, :show, id: 2, error: 'Access required'
 		def redirect(*args)
 			if args.last.is_a? Hash
-				add_controller_class(args)
-				parameters = args[0].instance_method(args[1]).parameters.map(&:last)
-				args[-1], flashes = args.last.partition do |key, _value|
-					parameters.include? key
-				end.map(&:to_h)
+				if args[0].is_a? String
+					flashes = args.pop
+				else
+					args[-1], flashes = extract_flashes(args)
+				end
 				flash.merge(flashes)
 			end
 			super
@@ -33,6 +33,15 @@ module Flame
 					(session ? session[:flash] : [])
 				)
 			).scope(key)
+		end
+
+		## Split Hash-argument to parameters and flashes
+		def extract_flashes(args)
+			add_controller_class(args)
+			parameters = args[0].instance_method(args[1]).parameters.map(&:last)
+			args.last.partition do |key, _value|
+				parameters.include? key
+			end.map(&:to_h)
 		end
 	end
 end
