@@ -10,6 +10,7 @@ module Flame
 			# as an initialization variable.
 			def initialize(session, parent = nil, scope = nil)
 				@now = session || []
+				fix_messages_as_array
 				@next = []
 				@parent = parent || self
 				@scope = scope
@@ -58,6 +59,16 @@ module Flame
 
 			def condition(hash, options = {}) # kind, section)
 				options.reject { |key, val| hash[key] == val || val.nil? }.empty?
+			end
+
+			def fix_messages_as_array
+				@now.each do |hash|
+					next unless hash[:text].is_a?(Array)
+					hash_with_arr = @now.delete(hash)
+					hash_with_arr[:text].each do |text|
+						@now.push(hash_with_arr.merge(text: text))
+					end
+				end
 			end
 		end
 	end
