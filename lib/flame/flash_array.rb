@@ -28,6 +28,7 @@ module Flame
 			# We assign to the _next_ hash, but retrieve values
 			# from the _now_ hash. Freaky, huh?
 			def []=(type, text)
+				return text.each { |el| self[type] = el } if text.is_a?(Array)
 				hash = { type: type, text: text }
 				# p @parent == self, @scope
 				hash[:scope] = @scope if @parent != self
