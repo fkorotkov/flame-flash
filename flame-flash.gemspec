@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
 	s.name        = 'flame-flash'
-	s.version     = '2.1.1'
+	s.version     = '2.2'
 	s.date        = Date.today.to_s
 
 	s.summary     = 'Flash plugin for Flame-framework'

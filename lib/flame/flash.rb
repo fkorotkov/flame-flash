@@ -6,7 +6,7 @@ module Flame
 		## After hook
 		def execute(method)
 			super
-			session[:flash] = flash.next
+			record_flashes
 		end
 
 		## Upgrade redirect method
@@ -21,6 +21,12 @@ module Flame
 				end
 				flash.merge(flashes)
 			end
+			super
+		end
+
+		## Capture halt method
+		def halt(*args)
+			record_flashes
 			super
 		end
 
@@ -42,6 +48,11 @@ module Flame
 			args.last.partition do |key, _value|
 				parameters.include? key
 			end.map(&:to_h)
+		end
+
+		## Move flash.next to session
+		def record_flashes
+			session[:flash] = flash.next
 		end
 	end
 end
