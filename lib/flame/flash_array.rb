@@ -62,12 +62,10 @@ module Flame
 			end
 
 			def fix_messages_as_array
-				@now.each do |hash|
+				@now.each_with_index do |hash, ind|
 					next unless hash[:text].is_a?(Array)
-					hash_with_arr = @now.delete(hash)
-					hash_with_arr[:text].each do |text|
-						@now.push(hash_with_arr.merge(text: text))
-					end
+					hash = @now.delete(hash)
+					@now.insert(ind, hash[:text].map { |text| hash.merge(text: text) })
 				end
 			end
 		end
