@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
 	s.authors     = ['Alexander Popov']
 	s.email       = ['alex.wayfer@gmail.com']
-	s.homepage    = 'https://gitlab.com/AlexWayfer/flame-flash'
+	s.homepage    = 'https://github.com/AlexWayfer/flame-flash'
 	s.license     = 'MIT'
 
 	s.add_runtime_dependency 'flame', '~> 4.0', '>= 4.0.3'
