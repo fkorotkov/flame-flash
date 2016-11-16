@@ -46,7 +46,7 @@ module Flame
 			add_controller_class(args)
 			parameters = args[0].instance_method(args[1]).parameters.map(&:last)
 			args.last.partition do |key, _value|
-				parameters.include? key
+				parameters.include?(key) || key == :params
 			end.map(&:to_h)
 		end
 
