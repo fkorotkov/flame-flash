@@ -21,6 +21,7 @@ module Flame
 				end
 				flash.merge(flashes)
 			end
+			flash.next.concat(flash.now) ## for multiple redirects
 			super
 		end
 
