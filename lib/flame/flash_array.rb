@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Flame
 	module Flash
 		# A subclass of Array that "remembers forward" by exactly one action.
@@ -29,7 +31,10 @@ module Flame
 			# We assign to the _next_ hash, but retrieve values
 			# from the _now_ hash. Freaky, huh?
 			def []=(type, text)
-				return text.each { |el| self[type] = el } if text.is_a?(Array)
+				if text.is_a?(Array)
+					text.each { |el| self[type] = el }
+					return
+				end
 				hash = { type: type, text: text }
 				# p @parent == self, @scope
 				hash[:scope] = @scope if @parent != self
