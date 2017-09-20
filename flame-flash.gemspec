@@ -1,3 +1,5 @@
+require 'date'
+
 Gem::Specification.new do |s|
 	s.name        = 'flame-flash'
 	s.version     = '2.3.3'
