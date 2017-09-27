@@ -31,7 +31,7 @@ module Flame
 			# We assign to the _next_ hash, but retrieve values
 			# from the _now_ hash. Freaky, huh?
 			def []=(type, text)
-				if text.is_a?(Array)
+				if text.is_a?(Enumerable)
 					text.each { |el| self[type] = el }
 					return
 				end
@@ -68,7 +68,7 @@ module Flame
 
 			def fix_messages_as_array
 				@now.each_with_index do |hash, ind|
-					next unless hash[:text].is_a?(Array)
+					next unless hash[:text].is_a?(Enumerable)
 					hash = @now.delete(hash)
 					@now.insert(ind, hash[:text].map { |text| hash.merge(text: text) })
 				end
