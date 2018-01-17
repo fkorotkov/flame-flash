@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 	s.homepage    = 'https://github.com/AlexWayfer/flame-flash'
 	s.license     = 'MIT'
 
-	s.add_runtime_dependency 'flame', '~> 4.6', '>= 4.6.0'
+	s.add_runtime_dependency 'flame', '>= 4.6.0', '< 6'
 
 	s.files = Dir[File.join('lib', '**', '*')]
 end
