@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'flash_array'
+require_relative 'flash/flash_array'
 
 module Flame
 	# Module for Flame::Flash extension with helper methods and base class

@@ -51,10 +51,6 @@ module Flame
 				selected.map { |hash| hash[:text] }
 			end
 
-			def each(&block)
-				@now.each(&block)
-			end
-
 			## Mass adding to next
 			def merge(hash)
 				hash.each { |type, text| self[type] = text }
@@ -62,7 +58,7 @@ module Flame
 
 			private
 
-			def condition(hash, options = {}) # kind, section)
+			def condition(hash, options = {})
 				options.reject { |key, val| hash[key] == val || val.nil? }.empty?
 			end
 
@@ -70,7 +66,7 @@ module Flame
 				@now.each_with_index do |hash, ind|
 					next unless hash[:text].is_a?(Enumerable)
 					hash = @now.delete(hash)
-					@now.insert(ind, hash[:text].map { |text| hash.merge(text: text) })
+					@now.insert(ind, *hash[:text].map { |text| hash.merge(text: text) })
 				end
 			end
 		end
