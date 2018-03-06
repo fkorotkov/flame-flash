@@ -39,13 +39,28 @@ describe Flame::Flash do
 				redirect '/', notice: 'Argument'
 			end
 
+			def set_as_flash_key
+				redirect :index, flash: { foo: 'bar' }
+			end
+
 			def halt_with_flashes
 				halt redirect :index, notice: 'Halted'
 			end
 		end
 
+		class ControllerWithParameter < Controller
+			def index
+				"params: #{params}, flashes: #{flash.now}"
+			end
+
+			def set_as_argument
+				redirect :index, foo: 'bar', notice: 'Argument'
+			end
+		end
+
 		class Application < Flame::Application
 			mount IndexController, '/'
+			mount ControllerWithParameter, '/controller_with_parameter/:?foo'
 		end
 	end
 
@@ -84,6 +99,17 @@ describe Flame::Flash do
 			end
 		end
 
+		context 'with parameters for controllers' do
+			it "doesn't extract controller's parameters as flashes" do
+				get '/controller_with_parameter/set_as_argument'
+				follow_redirect!
+				expect(last_response.body).to eq(
+					'params: {:foo=>"bar"},' \
+					' flashes: [{:type=>:notice, :text=>"Argument"}]'
+				)
+			end
+		end
+
 		context 'with params' do
 			it 'extract flashes from Hash argument' do
 				get '/set_as_argument_with_params'
@@ -103,6 +129,14 @@ describe Flame::Flash do
 					'params: {}, flashes: [{:type=>:notice, :text=>"Argument"}]'
 				)
 			end
+		end
+
+		it 'extract flashes from Hash at `flash` key' do
+			get '/set_as_flash_key'
+			follow_redirect!
+			expect(last_response.body).to eq(
+				'params: {}, flashes: [{:type=>:foo, :text=>"bar"}]'
+			)
 		end
 	end
 

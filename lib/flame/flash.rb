@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'gorilla-patch/slice'
+
 require_relative 'flash/flash_array'
 
 module Flame
@@ -16,12 +18,7 @@ module Flame
 		##   redirect ArticlesController, :show, id: 2, error: 'Access required'
 		def redirect(*args)
 			if args.last.is_a? Hash
-				if args[0].is_a? String
-					flashes = args.pop
-				else
-					args[-1], flashes = extract_flashes(args)
-				end
-				flash.merge(flashes)
+				flash.merge args.first.is_a?(String) ? args.pop : extract_flashes(args)
 			end
 			flash.next.concat(flash.now) ## for multiple redirects
 			super
@@ -44,13 +41,19 @@ module Flame
 			).scope(key)
 		end
 
+		RESERVED_FLASH_KEYS = %i[error warning notice].freeze
+
+		using GorillaPatch::Slice
+
 		## Split Hash-argument to parameters and flashes
 		def extract_flashes(args)
 			add_controller_class(args)
-			parameters = args[0].instance_method(args[1]).parameters.map(&:last)
-			args.last.partition do |key, _value|
-				parameters.include?(key) || key == :params
-			end.map(&:to_h)
+			flashes = args.last.delete(:flash) { {} }
+			## Yeah, `RESERVED_FLASH_KEYS` will rest in `args`
+			## and will be passed into parent's `redirect`.
+			## But I don't see a problem cause of it for now.
+			## If you see - please, send a PR, or create an issue.
+			flashes.merge args.last.slice(*RESERVED_FLASH_KEYS)
 		end
 
 		## Move flash.next to session
