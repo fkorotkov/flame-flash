@@ -4,7 +4,7 @@ require 'date'
 
 Gem::Specification.new do |s|
 	s.name        = 'flame-flash'
-	s.version     = '2.3.3'
+	s.version     = '3.0.0'
 	s.date        = Date.today.to_s
 
 	s.summary     = 'Flash plugin for Flame-framework'
