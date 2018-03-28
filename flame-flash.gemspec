@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
 	s.add_development_dependency 'codecov', '~> 0.1'
 	s.add_development_dependency 'pry-byebug', '~> 3.6'
-	s.add_development_dependency 'rack-test', '~> 0.8'
+	s.add_development_dependency 'rack-test', '~> 1.0'
 	s.add_development_dependency 'rake', '~> 12'
 	s.add_development_dependency 'rspec', '~> 3.7'
 	s.add_development_dependency 'rubocop', '~> 0.53'
