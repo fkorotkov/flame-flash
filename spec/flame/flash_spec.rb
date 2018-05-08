@@ -7,40 +7,59 @@ describe Flame::Flash do
 	module FlashTest
 		class Controller < Flame::Controller
 			include Flame::Flash
+
+			private
+
+			def server_error(exception)
+				p exception
+			end
 		end
 
 		class IndexController < Controller
 			def index
-				"params: #{params}, flashes: #{flash.now}"
+				"params: #{params}, flashes: #{flash.now.to_a}"
 			end
 
 			def show(id)
-				"id: #{id}, flashes: #{flash.now}"
+				"id: #{id}, flashes: #{flash.now.to_a}"
 			end
 
-			def set_as_regular
+			def redirect_set_as_regular
 				flash[:error] = 'Regular'
 				redirect :index
 			end
 
-			def set_as_argument
+			def redirect_set_as_argument
 				redirect :index, notice: 'Argument'
 			end
 
-			def set_as_argument_with_parameters
+			def redirect_set_as_argument_with_parameters
 				redirect :show, id: 2, notice: 'Argument'
 			end
 
-			def set_as_argument_with_params
+			def redirect_set_as_argument_with_params
 				redirect :index, params: { foo: 'bar' }, notice: 'Argument'
 			end
 
-			def set_as_argument_for_string
+			def redirect_set_as_argument_for_string
 				redirect '/', notice: 'Argument'
 			end
 
-			def set_as_flash_key
+			def redirect_set_as_flash_key
 				redirect :index, flash: { foo: 'bar' }
+			end
+
+			def view_set_as_regular
+				flash.now[:error] = 'Regular'
+				view :view
+			end
+
+			def view_set_as_argument
+				view :view, notice: 'Argument'
+			end
+
+			def view_set_as_flash_key
+				view :view, flash: { foo: 'bar' }
 			end
 
 			def halt_with_flashes
@@ -50,10 +69,10 @@ describe Flame::Flash do
 
 		class ControllerWithParameter < Controller
 			def index
-				"params: #{params}, flashes: #{flash.now}"
+				"params: #{params}, flashes: #{flash.now.to_a}"
 			end
 
-			def set_as_argument
+			def redirect_set_as_argument
 				redirect :index, foo: 'bar', notice: 'Argument'
 			end
 		end
@@ -70,7 +89,7 @@ describe Flame::Flash do
 
 	describe '#execute' do
 		it 'writes flashes in after-hook' do
-			get '/set_as_regular'
+			get '/redirect_set_as_regular'
 			follow_redirect!
 			expect(last_response.body).to eq(
 				'params: {}, flashes: [{:type=>:error, :text=>"Regular"}]'
@@ -81,7 +100,7 @@ describe Flame::Flash do
 	describe '#redirect' do
 		context 'without parameters for action' do
 			it 'extract flashes from Hash argument' do
-				get '/set_as_argument'
+				get '/redirect_set_as_argument'
 				follow_redirect!
 				expect(last_response.body).to eq(
 					'params: {}, flashes: [{:type=>:notice, :text=>"Argument"}]'
@@ -91,7 +110,7 @@ describe Flame::Flash do
 
 		context 'with parameters for action' do
 			it 'extract flashes from Hash argument' do
-				get '/set_as_argument_with_parameters'
+				get '/redirect_set_as_argument_with_parameters'
 				follow_redirect!
 				expect(last_response.body).to eq(
 					'id: 2, flashes: [{:type=>:notice, :text=>"Argument"}]'
@@ -101,7 +120,7 @@ describe Flame::Flash do
 
 		context 'with parameters for controllers' do
 			it "doesn't extract controller's parameters as flashes" do
-				get '/controller_with_parameter/set_as_argument'
+				get '/controller_with_parameter/redirect_set_as_argument'
 				follow_redirect!
 				expect(last_response.body).to eq(
 					'params: {:foo=>"bar"},' \
@@ -112,7 +131,7 @@ describe Flame::Flash do
 
 		context 'with params' do
 			it 'extract flashes from Hash argument' do
-				get '/set_as_argument_with_params'
+				get '/redirect_set_as_argument_with_params'
 				follow_redirect!
 				expect(last_response.body).to eq(
 					'params: {:foo=>"bar"},' \
@@ -123,7 +142,7 @@ describe Flame::Flash do
 
 		context 'first argument is a String' do
 			it 'extract flashes from all keys of Hash argument' do
-				get '/set_as_argument_for_string'
+				get '/redirect_set_as_argument_for_string'
 				follow_redirect!
 				expect(last_response.body).to eq(
 					'params: {}, flashes: [{:type=>:notice, :text=>"Argument"}]'
@@ -132,10 +151,35 @@ describe Flame::Flash do
 		end
 
 		it 'extract flashes from Hash at `flash` key' do
-			get '/set_as_flash_key'
+			get '/redirect_set_as_flash_key'
 			follow_redirect!
 			expect(last_response.body).to eq(
 				'params: {}, flashes: [{:type=>:foo, :text=>"bar"}]'
+			)
+		end
+	end
+
+	describe '#view' do
+		context 'with writing current flashes as regular' do
+			it 'renders view with flashes' do
+				get '/view_set_as_regular'
+				expect(last_response.body).to eq(
+					'[{:type=>:error, :text=>"Regular"}]'
+				)
+			end
+		end
+
+		it 'extract flashes from Hash argument' do
+			get '/view_set_as_argument'
+			expect(last_response.body).to eq(
+				'[{:type=>:notice, :text=>"Argument"}]'
+			)
+		end
+
+		it 'extract flashes from Hash at `flash` key' do
+			get '/view_set_as_flash_key'
+			expect(last_response.body).to eq(
+				'[{:type=>:foo, :text=>"bar"}]'
 			)
 		end
 	end

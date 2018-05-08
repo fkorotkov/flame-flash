@@ -1,74 +1,58 @@
 # frozen_string_literal: true
 
 module Flame
+	## https://github.com/bbatsov/rubocop/issues/5831
 	module Flash
-		# A subclass of Array that "remembers forward" by exactly one action.
-		# Tastes just like the API of Rails's ActionController::Flash::FlashHash,
-		# but with fewer calories.
+		## Just contains flashes
 		class FlashArray
-			attr_reader :now, :next
-
-			# Builds a new FlashHash. It takes the hash for this action's values
-			# as an initialization variable.
-			def initialize(session, parent = nil, scope = nil)
-				@now = session || []
-				fix_messages_as_array
-				@next = []
-				@parent = parent || self
-				@scope = scope
+			def initialize(array = [])
+				@array = []
+				concat(array)
 			end
 
-			def scope(scope = nil)
-				# p 'scope', scope
-				return self unless scope
-				self.class.new(
-					@now.select { |hash| condition(hash, scope: scope) },
-					self,
-					scope
-				)
+			def ==(other)
+				other == @array
 			end
 
-			# We assign to the _next_ hash, but retrieve values
-			# from the _now_ hash. Freaky, huh?
+			def each(&block)
+				@array.each(&block)
+			end
+
 			def []=(type, text)
+				push(type, text)
+			end
+
+			def push(type, text, scope: nil)
 				if text.is_a?(Enumerable)
-					text.each { |el| self[type] = el }
+					text.each { |el| push(type, el, scope: scope) }
 					return
 				end
 				hash = { type: type, text: text }
-				# p @parent == self, @scope
-				hash[:scope] = @scope if @parent != self
-				# p hash
-				@parent.next.push(hash)
-				# p @parent.next
+				hash[:scope] = scope if scope
+				@array.push(hash)
 			end
 
-			def [](type = nil)
-				selected = @parent.now.select do |hash|
-					condition(hash, type: type, scope: @scope)
+			def select(**options)
+				@array.select do |hash|
+					options.reject { |key, val| hash[key] == val || val.nil? }.empty?
 				end
-				# p 'flash[]', type, @scope, selected
-				selected.map { |hash| hash[:text] }
 			end
 
-			## Mass adding to next
+			def concat(array)
+				array.each do |hash|
+					push(hash[:type], hash[:text], scope: hash[:scope])
+				end
+			end
+
 			def merge(hash)
 				hash.each { |type, text| self[type] = text }
 			end
 
-			private
-
-			def condition(hash, options = {})
-				options.reject { |key, val| hash[key] == val || val.nil? }.empty?
-			end
-
-			def fix_messages_as_array
-				@now.each_with_index do |hash, ind|
-					next unless hash[:text].is_a?(Enumerable)
-					hash = @now.delete(hash)
-					@now.insert(ind, *hash[:text].map { |text| hash.merge(text: text) })
-				end
+			def to_a
+				@array
 			end
 		end
+
+		private_constant :FlashArray
 	end
 end

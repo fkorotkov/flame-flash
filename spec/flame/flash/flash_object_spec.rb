@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-describe Flame::Flash::FlashArray do
-	subject { described_class.new(session, parent, scope) }
-
+describe Flame::Flash::FlashObject do
 	let(:session) { nil }
-	let(:parent) { nil }
+	let(:parent) { described_class.new(session) }
 	let(:scope) { nil }
+
+	subject { parent.scope(scope) }
 
 	describe '#initialize' do
 		context 'with existing session' do
@@ -145,7 +145,7 @@ describe Flame::Flash::FlashArray do
 	end
 
 	describe '#merge' do
-		it 'merges received Hash with into `next`' do
+		it 'merges received Hash into `next`' do
 			subject[:error] = 'Failed'
 
 			subject.merge(notice: 'Done')

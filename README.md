@@ -50,7 +50,8 @@ class PostsController < Flame::Controller
   end
 
   def create
-    halt redirect :index, error: 'Not enought permissions'
+    flash.now[:error] = 'Not enought permissions'
+    view :new
   end
 end
 ```
