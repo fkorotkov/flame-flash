@@ -7,6 +7,8 @@ require_relative 'flash/flash_array'
 module Flame
 	# Module for Flame::Flash extension with helper methods and base class
 	module Flash
+		protected
+
 		## After hook
 		def execute(method)
 			super
