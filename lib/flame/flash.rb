@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'gorilla-patch/slice'
+require 'gorilla_patch/slice'
 
 require_relative 'flash/flash_array'
 
