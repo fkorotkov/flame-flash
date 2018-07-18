@@ -27,9 +27,13 @@ module Flame
 		## Upgrade view method
 		## @example Render view with error
 		##   view :show, error: 'Access required'
-		def view(*args)
-			flash.now.merge extract_flashes(args) if args.last.is_a? Hash
-			super
+		def view(path = nil, options = {}, &block)
+			flash.now.merge extract_flashes(options)
+			super(
+				path || caller_locations(1, 1)[0].label.to_sym,
+				options,
+				&block
+			)
 		end
 
 		## Capture halt method
@@ -54,20 +58,20 @@ module Flame
 		using GorillaPatch::Slice
 
 		## Split Hash-argument to parameters and flashes
-		def extract_flashes(args)
-			flashes = args.last.delete(:flash) { {} }
-			## Yeah, `RESERVED_FLASH_KEYS` will rest in `args`
+		def extract_flashes(options)
+			flashes = options.delete(:flash) { {} }
+			## Yeah, `RESERVED_FLASH_KEYS` will rest in `options`
 			## and will be passed into parent's `redirect`.
 			## But I don't see a problem cause of it for now.
 			## If you see - please, send a PR, or create an issue.
-			flashes.merge args.last.slice(*RESERVED_FLASH_KEYS)
+			flashes.merge options.slice(*RESERVED_FLASH_KEYS)
 		end
 
 		def extract_flashes_for_redirect(args)
 			return {} unless args.last.is_a? Hash
 			return args.pop if args.first.is_a?(String)
 			add_controller_class(args)
-			extract_flashes(args)
+			extract_flashes(args.last)
 		end
 
 		## Move flash.next to session

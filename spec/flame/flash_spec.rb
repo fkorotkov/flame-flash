@@ -51,15 +51,19 @@ describe Flame::Flash do
 
 			def view_set_as_regular
 				flash.now[:error] = 'Regular'
-				view :view
+				view :index
 			end
 
 			def view_set_as_argument
-				view :view, notice: 'Argument'
+				view :index, notice: 'Argument'
 			end
 
 			def view_set_as_flash_key
-				view :view, flash: { foo: 'bar' }
+				view :index, flash: { foo: 'bar' }
+			end
+
+			def view_without_parameters
+				view
 			end
 
 			def halt_with_flashes
@@ -185,6 +189,11 @@ describe Flame::Flash do
 			expect(last_response.body).to eq(
 				'[{:type=>:foo, :text=>"bar"}]'
 			)
+		end
+
+		it "doesn't break Flame::Controller#view without parameters" do
+			get '/view_without_parameters'
+			expect(last_response.body).to eq("I'm still alive!\n")
 		end
 	end
 
