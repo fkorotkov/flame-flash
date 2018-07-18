@@ -160,6 +160,10 @@ describe Flame::Flash do
 	end
 
 	describe '#view' do
+		after do
+			expect(last_response.status).to eq 200
+		end
+
 		context 'with writing current flashes as regular' do
 			it 'renders view with flashes' do
 				get '/view_set_as_regular'
