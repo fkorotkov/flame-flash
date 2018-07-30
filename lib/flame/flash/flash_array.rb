@@ -32,6 +32,10 @@ module Flame
 				@array.push(hash)
 			end
 
+			def delete(type, text)
+				@array.delete(type: type, text: text)
+			end
+
 			def select(**options)
 				@array.select do |hash|
 					options.reject { |key, val| hash[key] == val || val.nil? }.empty?

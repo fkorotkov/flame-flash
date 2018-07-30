@@ -30,7 +30,7 @@ describe Flame::Flash do
 			end
 
 			def redirect_set_as_argument
-				redirect :index, notice: 'Argument'
+				redirect :index, notice: 'Argument', params: params
 			end
 
 			def redirect_set_as_argument_with_parameters
@@ -68,6 +68,13 @@ describe Flame::Flash do
 
 			def halt_with_flashes
 				halt redirect :index, notice: 'Halted'
+			end
+
+			protected
+
+			def execute(action)
+				flash.now.delete :notice, 'Argument' if params[:delete]
+				super
 			end
 		end
 
@@ -203,6 +210,16 @@ describe Flame::Flash do
 			follow_redirect!
 			expect(last_response.body).to eq(
 				'params: {}, flashes: [{:type=>:notice, :text=>"Halted"}]'
+			)
+		end
+	end
+
+	describe 'flash.now.delete' do
+		it 'deletes flashes by type and text' do
+			get '/redirect_set_as_argument?delete=true'
+			follow_redirect!
+			expect(last_response.body).to eq(
+				'params: {:delete=>"true"}, flashes: []'
 			)
 		end
 	end
