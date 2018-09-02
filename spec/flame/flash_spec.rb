@@ -12,6 +12,7 @@ describe Flame::Flash do
 
 			def server_error(exception)
 				p exception
+				puts exception.backtrace
 			end
 		end
 
@@ -30,7 +31,7 @@ describe Flame::Flash do
 			end
 
 			def redirect_set_as_argument
-				redirect :index, notice: 'Argument', params: params
+				redirect :index, notice: 'Argument', **params
 			end
 
 			def redirect_set_as_argument_with_parameters
@@ -38,7 +39,7 @@ describe Flame::Flash do
 			end
 
 			def redirect_set_as_argument_with_params
-				redirect :index, params: { foo: 'bar' }, notice: 'Argument'
+				redirect :index, foo: 'bar', notice: 'Argument'
 			end
 
 			def redirect_set_as_argument_for_string
