@@ -16,7 +16,7 @@ describe Flame::Flash do
 			end
 		end
 
-		class IndexController < Controller
+		class MainController < Controller
 			def index
 				"params: #{params}, flashes: #{flash.now.to_a}"
 			end
@@ -90,7 +90,7 @@ describe Flame::Flash do
 		end
 
 		class Application < Flame::Application
-			mount IndexController, '/'
+			mount MainController, '/'
 			mount ControllerWithParameter, '/controller_with_parameter/:?foo'
 		end
 	end
