@@ -18,6 +18,7 @@ module Flame
 
 			def scope(key = nil)
 				return self unless key
+
 				self.class.new(now.select(scope: key), self, key)
 			end
 

@@ -76,6 +76,7 @@ module Flame
 		def extract_flashes_for_redirect(args)
 			return [args, {}] unless args.last.is_a? Hash
 			return [args, args.pop] if args.first.is_a?(String)
+
 			add_controller_class(args)
 			options, flashes = extract_flashes(args.last)
 			[args[0..-2].push(options), flashes]
