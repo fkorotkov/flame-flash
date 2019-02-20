@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
 	s.add_development_dependency 'rack-test', '~> 1.0'
 	s.add_development_dependency 'rake', '~> 12'
 	s.add_development_dependency 'rspec', '~> 3.7'
-	s.add_development_dependency 'rubocop', '~> 0.64.0'
+	s.add_development_dependency 'rubocop', '~> 0.65.0'
 	s.add_development_dependency 'simplecov', '~> 0.15'
 
 	s.files = Dir[File.join('lib', '**', '*')]
