@@ -2,6 +2,7 @@ bundle_cache: &bundle_cache
   bundle_cache:
     folder: /usr/local/bundle
     fingerprint_script:
+      - cat .cirrus*
       - echo $CIRRUS_TASK_NAME:$CIRRUS_OS
       - ruby -v
       - cat Gemfile
