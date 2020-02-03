@@ -1,13 +1,16 @@
+environment:
+  BUNDLE_PATH: vendor/bundle
+
 bundle_cache: &bundle_cache
   bundle_cache:
-    folder: /usr/local/bundle
+    folder: $BUNDLE_PATH
     fingerprint_script:
       - cat .cirrus*
       - echo $CIRRUS_TASK_NAME:$CIRRUS_OS
       - ruby -v
       - cat Gemfile
       - cat *.gemspec
-    populate_script: bundle update
+    populate_script: bundle install --deployment --path=$BUNDLE_PATH
 
 test_task:
   container:
