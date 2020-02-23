@@ -1,0 +1,51 @@
+stages:
+  - lint
+  - test
+
+## Cache gems in between builds
+cache:
+  key:
+    prefix: ${CI_IMAGE}
+    files:
+      - Gemfile
+      - '*.gemspec'
+  paths:
+    - vendor/bundle
+
+before_script:
+  ## Install dependencies
+  - bundle config --local path vendor/bundle
+  - bundle install -j $(nproc)
+
+.ruby:
+  image: $CI_IMAGE
+
+rubocop:
+  extends: .ruby
+  stage: lint
+  variables:
+    CI_IMAGE: 'ruby:2.6'
+  script:
+    - bundle exec rubocop
+
+.rspec:
+  extends: .ruby
+  stage: test
+  script:
+    - bundle exec rspec
+
+rspec-2.4:
+  extends: .rspec
+  variables:
+    CI_IMAGE: 'ruby:2.4'
+
+
+rspec-2.5:
+  extends: .rspec
+  variables:
+    CI_IMAGE: 'ruby:2.5'
+
+rspec-2.6:
+  extends: .rspec
+  variables:
+    CI_IMAGE: 'ruby:2.6'
